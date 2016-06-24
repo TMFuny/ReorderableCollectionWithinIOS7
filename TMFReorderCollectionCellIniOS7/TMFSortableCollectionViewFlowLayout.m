@@ -12,11 +12,49 @@
 #define sItemCell_Width (65)
 #define sItemCell_Height (36)
 
-@interface TMFSortableCollectionViewFlowLayout ()
+typedef NS_ENUM(NSUInteger, TMFScrollingDirection) {
+    TMFScrollingDirectionUnknown = 0,
+    TMFScrollingDirectionUp = 1,
+    TMFScrollingDirectionDown = 2,
+    TMFScrollingDirectionLeft = 3,
+    TMFScrollingDirectionRight = 4
+};
 
-@property (nonatomic, assign) NSInteger maxNumRows;
-@property (nullable, nonatomic, strong) NSMutableDictionary *layoutInformation;
-@property(nonatomic, assign) UIEdgeInsets insets;
+static NSString * const kTMFScrollingDirectionKey = @"TMFuny.kTMFScrollingDirectionKey";
+static NSString * const kTMFCollectionViewKeyPath = @"TMFuny.kTMFCollectionViewKeyPath";
+
+@interface UICollectionViewCell (TMFSortableCollectionViewFlowLayout)
+
+- (nonnull UIView *)TMF_snapshot;
+@end
+
+@implementation UICollectionViewCell (TMFSortableCollectionViewFlowLayout)
+
+- (UIView *)TMF_snapshot {
+    if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)]) {
+        return [self snapshotViewAfterScreenUpdates:YES];
+    } else {
+        UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.isOpaque, 0.0f);
+        [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        return [[UIImageView alloc] initWithImage:image];
+    }
+}
+
+@end
+
+@interface TMFSortableCollectionViewFlowLayout ()<UIGestureRecognizerDelegate>
+@property (nonnull, strong, nonatomic, readwrite) UILongPressGestureRecognizer *longPressGestureRecognizer;
+@property (nonnull, strong, nonatomic, readwrite) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nullable, strong, nonatomic) NSIndexPath *selectedItemIndexPath;
+@property (nullable, strong, nonatomic) UIView *currentView;
+@property (assign, nonatomic) CGPoint currentViewCenter;
+@property (assign, nonatomic) CGPoint panTranslationInCollectionView;
+@property (nullable, strong, nonatomic) CADisplayLink *displayLink;
+
+@property (weak, nonatomic, readonly) id<TMFSortableCollectionViewDataSource> dataSource;
+@property (weak, nonatomic, readonly) id<TMFSortableCollectionViewDelegateFlowLayout> delegate;
 @end
 
 @implementation TMFSortableCollectionViewFlowLayout
@@ -41,80 +79,50 @@
 }
 
 - (void)commonInit {
-    
+    [self configDefaults];
+}
+
+- (void)configDefaults {
+    _scrollingSpeed = 300.0f;
+    _scrollingTriggerEdgeInsets = UIEdgeInsetsMake(5.0f, 5.0f, 5.0f, 5.0f);
 }
 //this is not required to implement a custom layout but is provided as an opportunity to make initial calculations if necessary.
 - (void)prepareLayout {
-    NSMutableDictionary *layoutInformation = [NSMutableDictionary dictionary];
-    NSMutableDictionary *cellInformation = [NSMutableDictionary dictionary];
-    NSIndexPath *indexPath;
-    NSInteger numSections = [self.collectionView numberOfSections];
-    for (NSInteger section = 0; section < numSections; section++) {
-        NSInteger numItems = [self.collectionView numberOfItemsInSection:section];
-        for (NSInteger item = 0; item < numItems; item++) {
-            indexPath = [NSIndexPath indexPathForItem:item inSection:section];
-            TMFDateAttributes *attributes = [self attributesWithChildrenAtIndexPath:indexPath];
-            [cellInformation setObject:attributes forKey:indexPath];
-        }
-    }
-    
-    for (NSInteger section = numSections - 1; section >= 0; section--) {
-        NSInteger numItems = [self.collectionView numberOfItemsInSection:section];
-        NSInteger totalHeight = 0;
-        for (NSInteger item = 0; item < numItems; item++) {
-            indexPath = [NSIndexPath indexPathForItem:item inSection:section];
-            TMFDateAttributes *attributes = [cellInformation objectForKey:indexPath];
-            attributes.frame = [self frameForCellAtIndexPath:indexPath];
-            [self adjustFramesOfChildrenAndConnectorsForClassAtIndexPath:indexPath];
-            cellInformation[indexPath] = attributes;
-//            totalHeight += [self.customDataSource numRowsForClassAndChildrenAtIndexPath:indexPath];
-        }
-        if (section == 0) {
-            self.maxNumRows = totalHeight;
-        }
-    }
-    
-    [layoutInformation setObject:cellInformation forKey:@"MyCellKind"];
-    self.layoutInformation = layoutInformation;
-//    self.itemSize = CGSizeMake(sItemCellWidth, sItemCellHeight);
-//    self.minimumInteritemSpacing = 10;
-//    self.minimumLineSpacing = 20;
-//    self.scrollDirection = UICollectionViewScrollDirectionVertical;
-//    self.collectionView.decelerationRate = 1;
-//    self.collectionView.contentSize = CGSizeMake(100, 200);
+    self.itemSize = CGSizeMake(sItemCell_Width, sItemCell_Height);
+    self.minimumInteritemSpacing = 10;
+    self.minimumLineSpacing = 20;
+    self.sectionInset = UIEdgeInsetsMake(4, 10, 4, 10);
+    self.headerReferenceSize = CGSizeMake(sItemCell_Width, sItemCell_Height);
+    self.scrollDirection = UICollectionViewScrollDirectionVertical;
+    self.collectionView.decelerationRate = 1;
+    self.collectionView.contentSize = CGSizeMake(100, 200);
 }
 
-//required
-- (CGSize)collectionViewContentSize {
-    CGFloat width = self.collectionView.numberOfSections * (sItemCell_Width + self.insets.left + self.insets.right);
-    CGFloat height = self.maxNumRows * (sItemCell_Height + self.insets.top + self.insets.bottom);
-    return CGSizeMake(width, height);
-}
 
 //required
-- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
-    NSMutableArray *myAttributes = [NSMutableArray arrayWithCapacity:self.layoutInformation.count];
-    for (NSString *key in self.layoutInformation) {
-        NSDictionary *attributesDic = [self.layoutInformation objectForKey:key];
-        for (NSIndexPath *key in attributesDic) {
-            UICollectionViewLayoutAttributes *attributes = [attributesDic objectForKey:key];
-            if (CGRectIntersectsRect(rect, attributes.frame)) {
-                [myAttributes addObject:attributes];
-            }
-        }
-    }
-    return myAttributes;
-    
-}
+//- (CGSize)collectionViewContentSize {
+//    
+//}
+
+//required
+//- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
+//
+//    
+//}
+
 //
 ////If the user scrolls its content, the collection view calls this
 //- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
 //    return YES;
 //}
 //
-- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
-    return self.layoutInformation[@"MyCellKind"][indexPath];
-}
+//- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
+//    
+//}
+
+//- (void)setHeaderReferenceSize:(CGSize)headerReferenceSize {
+//    
+//}
 #pragma mark - AppleDataSource and Delegate
 //1.0
 //To support additional supplementary and decoration views, you need to override the following methods at a minimum:
@@ -138,21 +146,4 @@
 #pragma mark - Target-Action Event
 #pragma mark - PublicMethod
 #pragma mark - PrivateMethod
-- (TMFDateAttributes *)attributesWithChildrenAtIndexPath:(NSIndexPath *)indexPath {
-    //TODO
-    TMFDateAttributes *attributes = [[TMFDateAttributes alloc] init];
-    
-    return attributes;
-}
-
-- (CGRect)frameForCellAtIndexPath:(NSIndexPath *)indexPath {
-    //TODO
-    CGRect frame = CGRectZero;
-    
-    return frame;
-}
-
-- (void)adjustFramesOfChildrenAndConnectorsForClassAtIndexPath:(NSIndexPath *)indexPath {
-    //TODO
-}
 @end

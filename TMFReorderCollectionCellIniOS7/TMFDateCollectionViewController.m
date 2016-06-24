@@ -9,8 +9,11 @@
 #import "TMFDateCollectionViewController.h"
 #import "TMFDateCollectionViewCell.h"
 #import "TMFSortableCollectionViewFlowLayout.h"
+#import "NSDate+WSPXUtility.h"
 
-@interface TMFDateCollectionViewController ()
+
+
+@interface TMFDateCollectionViewController ()<TMFSortableCollectionViewDataSource, TMFSortableCollectionViewDelegateFlowLayout>
 
 @end
 
@@ -31,10 +34,10 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
     [self.collectionView setShowsVerticalScrollIndicator:NO];
     [self.collectionView setShowsHorizontalScrollIndicator:NO];
     self.collectionView.backgroundColor = [UIColor grayColor];
-//    self.collectionView.dataSource = self;
-//    self.collectionView.delegate = self;
-//    TMFSortableCollectionViewFlowLayout *flowLayout = [[TMFSortableCollectionViewFlowLayout alloc] init];
-//    self.collectionView.collectionViewLayout = flowLayout;
+    self.collectionView.dataSource = self;
+    self.collectionView.delegate = self;
+    TMFSortableCollectionViewFlowLayout *flowLayout = [[TMFSortableCollectionViewFlowLayout alloc] init];
+    self.collectionView.collectionViewLayout = flowLayout;
     self.dates = [[NSMutableArray alloc] init];
     [self loadDates];
 }
@@ -74,6 +77,7 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 }
 
 
+
 #pragma mark <UICollectionViewDelegate>
 
 
@@ -106,24 +110,24 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 
 //https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/UsingtheFlowLayout/UsingtheFlowLayout.html#//apple_ref/doc/uid/TP40012334-CH3-SW4
 #pragma mark <UICollectionViewDelegateFlowLayout>
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    return CGSizeMake(40, 20);
-}
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+//    return CGSizeMake(40, 20);
+//}
 
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(4, 10, 4, 10);
-}
+//- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+//    return UIEdgeInsetsMake(4, 10, 4, 10);
+//}
 // 设置没一行之间的最小间距(实际的间距可能大于最小间距,这个最小间=上行最底部的item的底和下行最顶部的item的顶 之间的距离)
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    return 20.0;
-}
+//- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+//    return 20.0;
+//}
 // 设置每个item之间的最小间距(实际的间距可能大于最小间距)
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 10.0;
-}
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    return CGSizeMake(200, 20);
-}
+//- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+//    return 10.0;
+//}
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+//    return CGSizeMake(200, 20);
+//}
 
 #pragma mark - ThirdPartyDataSource and Delegate
 #pragma mark - CustomDataSource and Delegate
@@ -132,7 +136,7 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 #pragma mark - PrivateMethod
 - (void)loadDates {
     for (int i = 0; i < 50; i++) {
-        [self.dates addObject:[NSDate date]];
+        [self.dates addObject:[[[NSDate date] getDateStringByTheFormatString:DATE_FORMAT_HH_MM_SS_24HOUR] stringByAppendingString:[NSString stringWithFormat:@"%d",i]]];
     }
 }
 @end

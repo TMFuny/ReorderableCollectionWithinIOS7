@@ -17,6 +17,8 @@
 		B656661A1D1B869D004A57B9 /* TMFSortableCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B65666191D1B869D004A57B9 /* TMFSortableCollectionViewFlowLayout.m */; };
 		B656661D1D1B87C9004A57B9 /* TMFDateCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B656661C1D1B87C9004A57B9 /* TMFDateCollectionViewController.m */; };
 		B65666201D1B8A78004A57B9 /* TMFDateCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B656661F1D1B8A78004A57B9 /* TMFDateCollectionViewCell.m */; };
+		B658B81C1D1D0498003BD995 /* UIColor+TMFUtilityColor.m in Sources */ = {isa = PBXBuildFile; fileRef = B658B81B1D1D0498003BD995 /* UIColor+TMFUtilityColor.m */; };
+		B658B8271D1D2B0B003BD995 /* NSDate+WSPXUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = B658B8261D1D2B0B003BD995 /* NSDate+WSPXUtility.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,10 @@
 		B656661C1D1B87C9004A57B9 /* TMFDateCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMFDateCollectionViewController.m; sourceTree = "<group>"; };
 		B656661E1D1B8A78004A57B9 /* TMFDateCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMFDateCollectionViewCell.h; sourceTree = "<group>"; };
 		B656661F1D1B8A78004A57B9 /* TMFDateCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMFDateCollectionViewCell.m; sourceTree = "<group>"; };
+		B658B81A1D1D0498003BD995 /* UIColor+TMFUtilityColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+TMFUtilityColor.h"; sourceTree = "<group>"; };
+		B658B81B1D1D0498003BD995 /* UIColor+TMFUtilityColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+TMFUtilityColor.m"; sourceTree = "<group>"; };
+		B658B8251D1D2B0B003BD995 /* NSDate+WSPXUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+WSPXUtility.h"; sourceTree = "<group>"; };
+		B658B8261D1D2B0B003BD995 /* NSDate+WSPXUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+WSPXUtility.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +111,10 @@
 				B656661F1D1B8A78004A57B9 /* TMFDateCollectionViewCell.m */,
 				B628E1841D1BE1FC006F88FB /* TMFDateAttributes.h */,
 				B628E1851D1BE1FC006F88FB /* TMFDateAttributes.m */,
+				B658B8251D1D2B0B003BD995 /* NSDate+WSPXUtility.h */,
+				B658B8261D1D2B0B003BD995 /* NSDate+WSPXUtility.m */,
+				B658B81A1D1D0498003BD995 /* UIColor+TMFUtilityColor.h */,
+				B658B81B1D1D0498003BD995 /* UIColor+TMFUtilityColor.m */,
 			);
 			path = TMFReorderCollectionCellIniOS7;
 			sourceTree = "<group>";
@@ -232,6 +242,8 @@
 				B65665F81D1B85E5004A57B9 /* AppDelegate.m in Sources */,
 				B656661D1D1B87C9004A57B9 /* TMFDateCollectionViewController.m in Sources */,
 				B65665F51D1B85E5004A57B9 /* main.m in Sources */,
+				B658B81C1D1D0498003BD995 /* UIColor+TMFUtilityColor.m in Sources */,
+				B658B8271D1D2B0B003BD995 /* NSDate+WSPXUtility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
