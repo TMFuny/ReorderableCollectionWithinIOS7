@@ -78,8 +78,13 @@ static NSString * const kTMFCollectionViewKeyPath = @"TMFuny.kTMFCollectionViewK
     return self;
 }
 
+- (void)dealloc {
+    
+}
+
 - (void)commonInit {
     [self configDefaults];
+    [self addObserver:self forKeyPath:kTMFCollectionViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)configDefaults {
@@ -98,6 +103,34 @@ static NSString * const kTMFCollectionViewKeyPath = @"TMFuny.kTMFCollectionViewK
     self.collectionView.contentSize = CGSizeMake(100, 200);
 }
 
+- (void)setupCollectionView {
+    _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
+    _longPressGestureRecognizer.delegate = self;
+    
+    for (UIGestureRecognizer *gestureRecognizer in self.collectionView.gestureRecognizers) {
+        if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) {
+            [gestureRecognizer requireGestureRecognizerToFail:_longPressGestureRecognizer];
+        }
+    }
+    
+    [self.collectionView addGestureRecognizer:_longPressGestureRecognizer];
+    
+    _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+}
+
+- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+    if ([layoutAttributes.indexPath isEqual:self.selectedItemIndexPath]) {
+        layoutAttributes.hidden = YES;
+    }
+}
+
+- (id<TMFSortableCollectionViewDataSource>)dataSource {
+    return (id<TMFSortableCollectionViewDataSource>)self.collectionView.dataSource;
+}
+
+-(id<TMFSortableCollectionViewDelegateFlowLayout>)delegate {
+    return (id<TMFSortableCollectionViewDelegateFlowLayout>)self.collectionView.delegate;
+}
 
 //required
 //- (CGSize)collectionViewContentSize {
@@ -105,20 +138,54 @@ static NSString * const kTMFCollectionViewKeyPath = @"TMFuny.kTMFCollectionViewK
 //}
 
 //required
-//- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
-//
-//    
-//}
+- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
 
+    NSArray *layoutAttributesForElementsInRect = [super layoutAttributesForElementsInRect:rect];
+    
+    for (UICollectionViewLayoutAttributes *layoutAttributes in layoutAttributesForElementsInRect) {
+        switch (layoutAttributes.representedElementCategory) {
+            case UICollectionElementCategoryCell:
+            {
+                [self applyLayoutAttributes:layoutAttributes];
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+                 return layoutAttributesForElementsInRect;
+}
+
+- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewLayoutAttributes *layoutAttributes = [super layoutAttributesForItemAtIndexPath:indexPath];
+    
+    switch (layoutAttributes.representedElementCategory) {
+        case UICollectionElementCategoryCell:
+        {
+            [self applyLayoutAttributes:layoutAttributes];
+        }
+            break;
+            
+        default:
+            break;
+    }
+    return layoutAttributes;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+    if ([keyPath isEqualToString:kTMFCollectionViewKeyPath]) {
+        if (self.collectionView != nil) {
+            [self setupCollectionView];
+        }
+    }
+}
 //
 ////If the user scrolls its content, the collection view calls this
 //- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
 //    return YES;
 //}
-//
-//- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
-//    
-//}
+
 
 //- (void)setHeaderReferenceSize:(CGSize)headerReferenceSize {
 //    
