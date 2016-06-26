@@ -34,10 +34,10 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
     [self.collectionView setShowsVerticalScrollIndicator:NO];
     [self.collectionView setShowsHorizontalScrollIndicator:NO];
     self.collectionView.backgroundColor = [UIColor grayColor];
-    self.collectionView.dataSource = self;
-    self.collectionView.delegate = self;
-    TMFSortableCollectionViewFlowLayout *flowLayout = [[TMFSortableCollectionViewFlowLayout alloc] init];
-    self.collectionView.collectionViewLayout = flowLayout;
+//    self.collectionView.dataSource = self;
+//    self.collectionView.delegate = self;
+//    TMFSortableCollectionViewFlowLayout *flowLayout = [[TMFSortableCollectionViewFlowLayout alloc] init];
+//    self.collectionView.collectionViewLayout = flowLayout;
     self.dates = [[NSMutableArray alloc] init];
     [self loadDates];
 }
@@ -55,7 +55,7 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
 
-    return 2;
+    return 1;
 }
 
 
@@ -67,46 +67,70 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     TMFDateCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
     
-    cell.dateLabel.text = [self.dates objectAtIndex:indexPath.row];
-    if (indexPath.section == 0) {
-        cell.backgroundColor = [UIColor greenColor];
-    } else {
-        cell.backgroundColor = [UIColor yellowColor];
-    }
+    cell.dateLabel.text = [self.dates objectAtIndex:indexPath.item];
     return cell;
 }
 
-
-
-#pragma mark <UICollectionViewDelegate>
-
-
-// Uncomment this method to specify if the specified item should be highlighted during tracking
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
-	return YES;
+#pragma mark TMFSortableCollectionViewDataSource
+- (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath willMoveToIndexPath:(NSIndexPath *)toIndexPath {
+    NSString *removeStr = self.dates[fromIndexPath.item];
+    [self.dates removeObjectAtIndex:fromIndexPath.item];
+    [self.dates insertObject:removeStr atIndex:toIndexPath.item];
 }
 
-
-
-// Uncomment this method to specify if the specified item should be selected
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+- (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
 
-
-
-// Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath {
-	return NO;
+- (BOOL)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath canMovetoIndexPath:(NSIndexPath *)toIndexPath {
+    return YES;
 }
 
-- (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	return NO;
+#pragma mark TMFSortableCollectionViewDelegateFlowLayout
+- (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout willBeginDraggingItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"will begin drag");
 }
 
-- (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	
+- (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout didBeginDraggingItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"did begin drag");
 }
+
+- (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout willEndDraggingItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"will end drag");
+}
+
+- (void)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout didEndDraggingItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"did end drag");
+}
+#pragma mark <UICollectionViewDelegate>
+
+
+//// Uncomment this method to specify if the specified item should be highlighted during tracking
+//- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+//	return YES;
+//}
+//
+//
+//
+//// Uncomment this method to specify if the specified item should be selected
+//- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+//    return YES;
+//}
+//
+//
+//
+//// Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
+//- (BOOL)collectionView:(UICollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath {
+//	return NO;
+//}
+//
+//- (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
+//	return NO;
+//}
+//
+//- (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
+//	
+//}
 
 //https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/UsingtheFlowLayout/UsingtheFlowLayout.html#//apple_ref/doc/uid/TP40012334-CH3-SW4
 #pragma mark <UICollectionViewDelegateFlowLayout>
@@ -136,7 +160,7 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 #pragma mark - PrivateMethod
 - (void)loadDates {
     for (int i = 0; i < 50; i++) {
-        [self.dates addObject:[[[NSDate date] getDateStringByTheFormatString:DATE_FORMAT_HH_MM_SS_24HOUR] stringByAppendingString:[NSString stringWithFormat:@"%d",i]]];
+        [self.dates addObject:[[[NSDate date] getDateStringByTheFormatString:DATE_FORMAT_HH_MM_24HOUR] stringByAppendingString:[NSString stringWithFormat:@"%d",i]]];
     }
 }
 @end

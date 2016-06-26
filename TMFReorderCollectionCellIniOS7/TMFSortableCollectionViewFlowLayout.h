@@ -33,6 +33,6 @@
 - (void)collectionView:(nonnull UICollectionView *)collectionView itemAtIndexPath:(nonnull NSIndexPath *)fromIndexPath didMoveToIndexPath:(nonnull NSIndexPath *)toIndexPath;
 
 - (BOOL)collectionView:(nonnull UICollectionView *)collectionView canMoveItemAtIndexPath:(nonnull NSIndexPath *)indexPath;
-- (void)collectionView:(nonnull UICollectionView *)collectionView itemAtIndexPath:(nonnull NSIndexPath *)fromIndexPath canMovetoIndexPath:(nonnull NSIndexPath *)toIndexPath;
+- (BOOL)collectionView:(nonnull UICollectionView *)collectionView itemAtIndexPath:(nonnull NSIndexPath *)fromIndexPath canMovetoIndexPath:(nonnull NSIndexPath *)toIndexPath;
 
 @end
