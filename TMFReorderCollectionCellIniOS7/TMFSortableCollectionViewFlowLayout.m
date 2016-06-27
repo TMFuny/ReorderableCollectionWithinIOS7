@@ -125,10 +125,10 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
     self.itemSize = CGSizeMake(sItemCell_Width, sItemCell_Height);
     self.minimumInteritemSpacing = 10;
     self.minimumLineSpacing = 20;
-//    self.sectionInset = UIEdgeInsetsMake(4, 10, 4, 10);
-//    self.headerReferenceSize = CGSizeMake(sItemCell_Width, sItemCell_Height);
+    self.sectionInset = UIEdgeInsetsMake(4, 10, 4, 10);
+    self.headerReferenceSize = CGSizeMake(sItemCell_Width, sItemCell_Height);
 //    self.scrollDirection = UICollectionViewScrollDirectionVertical;
-//    self.collectionView.decelerationRate = 1;
+    self.collectionView.decelerationRate = 1;
 //    self.collectionView.contentSize = CGSizeMake(100, 200);
 }
 
@@ -261,6 +261,26 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
 //finalLayoutAttributesForDisappearingDecorationElementOfKind:atIndexPath:
 //prepareForCollectionViewUpdates:
 //finalizeCollectionViewUpdates
+
+//- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+//{
+//    UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
+//    
+//        attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
+//        attributes.alpha = 0.0f;
+//        return attributes;
+//}
+//
+//- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+//{
+//    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
+//    
+//        attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
+//        attributes.alpha = 0.0f;
+//    
+//        return attributes;
+//
+//}
 #pragma mark UIGestureRecognizerDelegate methods
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if ([self.panGestureRecognizer isEqual:gestureRecognizer]) {

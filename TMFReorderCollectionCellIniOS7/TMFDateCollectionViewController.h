@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface TMFDateCollectionViewController : UICollectionViewController
-@property (nonatomic, strong, nullable) NSMutableArray *dates;
+@property (nonatomic, strong, nullable) NSMutableArray *firstDates;
+@property (nonatomic, strong, nullable) NSMutableArray *secondDates;
 @end

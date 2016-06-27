@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B628E1861D1BE1FC006F88FB /* TMFDateAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = B628E1851D1BE1FC006F88FB /* TMFDateAttributes.m */; };
+		B6554D6E1D20BD0D00D27372 /* TMFCollectionViewSectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = B6554D6D1D20BD0D00D27372 /* TMFCollectionViewSectionHeader.m */; };
 		B65665F51D1B85E5004A57B9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B65665F41D1B85E5004A57B9 /* main.m */; };
 		B65665F81D1B85E5004A57B9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B65665F71D1B85E5004A57B9 /* AppDelegate.m */; };
 		B65665FE1D1B85E5004A57B9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B65665FC1D1B85E5004A57B9 /* Main.storyboard */; };
@@ -39,6 +40,8 @@
 /* Begin PBXFileReference section */
 		B628E1841D1BE1FC006F88FB /* TMFDateAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMFDateAttributes.h; sourceTree = "<group>"; };
 		B628E1851D1BE1FC006F88FB /* TMFDateAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMFDateAttributes.m; sourceTree = "<group>"; };
+		B6554D6C1D20BD0D00D27372 /* TMFCollectionViewSectionHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMFCollectionViewSectionHeader.h; sourceTree = "<group>"; };
+		B6554D6D1D20BD0D00D27372 /* TMFCollectionViewSectionHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMFCollectionViewSectionHeader.m; sourceTree = "<group>"; };
 		B65665F01D1B85E5004A57B9 /* TMFReorderCollectionCellIniOS7.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMFReorderCollectionCellIniOS7.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B65665F41D1B85E5004A57B9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B65665F61D1B85E5004A57B9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -129,6 +132,8 @@
 				B658B8261D1D2B0B003BD995 /* NSDate+WSPXUtility.m */,
 				B658B81A1D1D0498003BD995 /* UIColor+TMFUtilityColor.h */,
 				B658B81B1D1D0498003BD995 /* UIColor+TMFUtilityColor.m */,
+				B6554D6C1D20BD0D00D27372 /* TMFCollectionViewSectionHeader.h */,
+				B6554D6D1D20BD0D00D27372 /* TMFCollectionViewSectionHeader.m */,
 			);
 			path = TMFReorderCollectionCellIniOS7;
 			sourceTree = "<group>";
@@ -264,6 +269,7 @@
 				B65665F51D1B85E5004A57B9 /* main.m in Sources */,
 				B658B81C1D1D0498003BD995 /* UIColor+TMFUtilityColor.m in Sources */,
 				B658B8271D1D2B0B003BD995 /* NSDate+WSPXUtility.m in Sources */,
+				B6554D6E1D20BD0D00D27372 /* TMFCollectionViewSectionHeader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

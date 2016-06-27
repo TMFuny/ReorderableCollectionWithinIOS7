@@ -8,6 +8,7 @@
 
 #import "TMFDateCollectionViewController.h"
 #import "TMFDateCollectionViewCell.h"
+#import "TMFCollectionViewSectionHeader.h"
 #import "TMFSortableCollectionViewFlowLayout.h"
 #import "NSDate+WSPXUtility.h"
 
@@ -19,8 +20,8 @@
 
 @implementation TMFDateCollectionViewController
 
-static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
-
+static NSString * const cellReuseIdentifier = @"TMFCellReuseIdentifier";
+static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
 #pragma mark - ViewLifeCycle
 
 - (void)viewDidLoad {
@@ -30,7 +31,8 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Register cell classes
-    [self.collectionView registerClass:[TMFDateCollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
+    [self.collectionView registerClass:[TMFDateCollectionViewCell class] forCellWithReuseIdentifier:cellReuseIdentifier];
+    [self.collectionView registerClass:[TMFCollectionViewSectionHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerReuseIndentifier];
     [self.collectionView setShowsVerticalScrollIndicator:NO];
     [self.collectionView setShowsHorizontalScrollIndicator:NO];
     self.collectionView.backgroundColor = [UIColor grayColor];
@@ -38,7 +40,8 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 //    self.collectionView.delegate = self;
 //    TMFSortableCollectionViewFlowLayout *flowLayout = [[TMFSortableCollectionViewFlowLayout alloc] init];
 //    self.collectionView.collectionViewLayout = flowLayout;
-    self.dates = [[NSMutableArray alloc] init];
+    self.firstDates = [[NSMutableArray alloc] init];
+    self.secondDates = [[NSMutableArray alloc] init];
     [self loadDates];
 }
 
@@ -54,29 +57,58 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 #pragma mark <UICollectionViewDataSource>
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-
+    
     return 2;
 }
 
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
 
-    return self.dates.count;
+    if (section == 0) {
+        return self.firstDates.count;
+    }
+    return self.secondDates.count;
+//    return self.dates.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    TMFDateCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+    TMFDateCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellReuseIdentifier forIndexPath:indexPath];
+    if (indexPath.section == 0) {
+        cell.dateLabel.text = [self.firstDates objectAtIndex:indexPath.item];
+    } else {
+        cell.dateLabel.text = [self.secondDates objectAtIndex:indexPath.item];
+    }
     
-    cell.dateLabel.text = [self.dates objectAtIndex:indexPath.item];
     return cell;
 }
 
-
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    TMFCollectionViewSectionHeader *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerReuseIndentifier forIndexPath:indexPath];
+    if (indexPath.section == 0) {
+        headerView.titleLabel.text = @"firstSection";
+    } else {
+        headerView.titleLabel.text = @"secondSection";
+    }
+    
+    return headerView;
+}
 #pragma mark TMFSortableCollectionViewDataSource
 - (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath willMoveToIndexPath:(NSIndexPath *)toIndexPath {
-    NSString *removeStr = self.dates[fromIndexPath.item];
-    [self.dates removeObjectAtIndex:fromIndexPath.item];
-    [self.dates insertObject:removeStr atIndex:toIndexPath.item];
+    NSString *removeStr = @"";
+    if (fromIndexPath.section == 0) {
+        removeStr = self.firstDates[fromIndexPath.item];
+        [self.firstDates removeObjectAtIndex:fromIndexPath.item];
+    } else {
+        removeStr = self.secondDates[fromIndexPath.item];
+        [self.secondDates removeObjectAtIndex:fromIndexPath.item];
+    }
+    
+    if (toIndexPath.section == 0) {
+        [self.firstDates insertObject:removeStr atIndex:toIndexPath.item];
+    } else {
+        
+        [self.secondDates insertObject:removeStr atIndex:toIndexPath.item];
+    }
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -113,9 +145,51 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 
 
 //// Uncomment this method to specify if the specified item should be highlighted during tracking
-//- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
-//	return YES;
-//}
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"selected indexPath section:%ld item:%ld", indexPath.section, indexPath.item);
+	return YES;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+}
+- (void)collectionView:(UICollectionView *)collectionView didUnhighlightItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+}
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    
+    if (indexPath.section == 0) {
+        NSIndexPath *toIndexPath = [NSIndexPath indexPathForRow:0 inSection:1];
+        NSString *removeStr = self.firstDates[indexPath.item];
+        [self.firstDates removeObjectAtIndex:indexPath.item];
+//        if (self.secondDates && self.secondDates.count == 0) {
+//            [self.secondDates addObject:removeStr];
+//        } else {
+            [self.secondDates insertObject:removeStr atIndex:toIndexPath.item];
+//        }
+        [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
+    } else {
+        NSIndexPath *toIndexPath = [NSIndexPath indexPathForRow:[collectionView numberOfItemsInSection:0] inSection:0];
+        NSString *removeStr = self.secondDates[indexPath.item];
+        [self.secondDates removeObjectAtIndex:indexPath.item];
+//        if (self.firstDates && self.firstDates.count == 0) {
+//            [self.firstDates addObject:removeStr];
+//        } else {
+            [self.firstDates insertObject:removeStr atIndex:toIndexPath.item];
+//        }
+        [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
+    }
+}
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+}
 //
 //
 //
@@ -166,8 +240,11 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 #pragma mark - PublicMethod
 #pragma mark - PrivateMethod
 - (void)loadDates {
-    for (int i = 0; i < 50; i++) {
-        [self.dates addObject:[[[NSDate date] getDateStringByTheFormatString:DATE_FORMAT_HH_MM_24HOUR] stringByAppendingString:[NSString stringWithFormat:@"%d",i]]];
+    for (int i = 0; i < 15; i++) {
+        [self.firstDates addObject:[[NSString stringWithFormat:@"1-%d",i] stringByAppendingString:[[NSDate date] getDateStringByTheFormatString:DATE_FORMAT_HH_MM_24HOUR]]];
     }
+//    for (int i = 0; i < 2; i++) {
+//        [self.secondDates addObject:[[NSString stringWithFormat:@"2-%d",i] stringByAppendingString:[[NSDate date] getDateStringByTheFormatString:DATE_FORMAT_HH_MM_24HOUR]]];
+//    }
 }
 @end
