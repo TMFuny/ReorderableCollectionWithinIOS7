@@ -55,7 +55,7 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
 
-    return 1;
+    return 2;
 }
 
 
@@ -71,6 +71,7 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
     return cell;
 }
 
+
 #pragma mark TMFSortableCollectionViewDataSource
 - (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath willMoveToIndexPath:(NSIndexPath *)toIndexPath {
     NSString *removeStr = self.dates[fromIndexPath.item];
@@ -79,10 +80,16 @@ static NSString * const reuseIdentifier = @"TMFReuseCellIdentifier";
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
+    if (indexPath.section == 0) {
+        return YES;
+    }
+    return NO;
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)fromIndexPath canMovetoIndexPath:(NSIndexPath *)toIndexPath {
+    if (toIndexPath.section != 0) {
+        return NO;
+    }
     return YES;
 }
 

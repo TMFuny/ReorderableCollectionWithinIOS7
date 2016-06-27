@@ -118,7 +118,7 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
 
 - (void)configDefaults {
     _scrollingSpeed = 300.0f;
-    _scrollingTriggerEdgeInsets = UIEdgeInsetsMake(5.0f, 5.0f, 5.0f, 5.0f);
+    _scrollingTriggerEdgeInsets = UIEdgeInsetsMake(30.0f, 30.0f, 30.0f, 30.0f);
 }
 //this is not required to implement a custom layout but is provided as an opportunity to make initial calculations if necessary.
 - (void)prepareLayout {
