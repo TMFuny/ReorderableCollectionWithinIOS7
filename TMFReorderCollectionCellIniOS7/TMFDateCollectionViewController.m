@@ -42,6 +42,7 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
 //    self.collectionView.collectionViewLayout = flowLayout;
     self.firstDates = [[NSMutableArray alloc] init];
     self.secondDates = [[NSMutableArray alloc] init];
+    self.thirdDates = [[NSMutableArray alloc] init];
     [self loadDates];
 }
 
@@ -58,7 +59,7 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     
-    return 2;
+    return 3;
 }
 
 
@@ -66,9 +67,11 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
 
     if (section == 0) {
         return self.firstDates.count;
+    } else if (section == 1) {
+        return self.secondDates.count;
+    } else {
+        return self.thirdDates.count;
     }
-    return self.secondDates.count;
-//    return self.dates.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -86,8 +89,10 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
     TMFCollectionViewSectionHeader *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:headerReuseIndentifier forIndexPath:indexPath];
     if (indexPath.section == 0) {
         headerView.titleLabel.text = @"firstSection";
-    } else {
+    } else if(indexPath.section == 1){
         headerView.titleLabel.text = @"secondSection";
+    } else if (indexPath.section == 2) {
+        
     }
     
     return headerView;
@@ -98,17 +103,22 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
     if (fromIndexPath.section == 0) {
         removeStr = self.firstDates[fromIndexPath.item];
         [self.firstDates removeObjectAtIndex:fromIndexPath.item];
-    } else {
+    } else if(fromIndexPath.section == 1){
         removeStr = self.secondDates[fromIndexPath.item];
         [self.secondDates removeObjectAtIndex:fromIndexPath.item];
+    } else if (fromIndexPath.section == 2) {
+        removeStr = self.thirdDates[fromIndexPath.item];
+        [self.thirdDates removeObjectAtIndex:fromIndexPath.item];
     }
     
     if (toIndexPath.section == 0) {
         [self.firstDates insertObject:removeStr atIndex:toIndexPath.item];
-    } else {
-        
+    } else if(toIndexPath.section == 1){
         [self.secondDates insertObject:removeStr atIndex:toIndexPath.item];
+    } else if (toIndexPath.section == 2) {
+        [self.thirdDates insertObject:removeStr atIndex:toIndexPath.item];
     }
+
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView canMoveItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -166,24 +176,52 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
     NSLog(@"%s", __PRETTY_FUNCTION__);
     
     if (indexPath.section == 0) {
+        if (indexPath.item % 2 == 0) {
+            NSIndexPath *toIndexPath = [NSIndexPath indexPathForRow:0 inSection:2];
+            NSString *removeStr = self.firstDates[indexPath.item];
+            [self.firstDates removeObjectAtIndex:indexPath.item];
+            if (self.thirdDates && self.thirdDates.count == 0) {
+                [self.thirdDates addObject:removeStr];
+            } else {
+                
+                [self.thirdDates insertObject:removeStr atIndex:toIndexPath.item];
+            }
+            
+            [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
+            return;
+        }
+        
         NSIndexPath *toIndexPath = [NSIndexPath indexPathForRow:0 inSection:1];
         NSString *removeStr = self.firstDates[indexPath.item];
         [self.firstDates removeObjectAtIndex:indexPath.item];
-//        if (self.secondDates && self.secondDates.count == 0) {
-//            [self.secondDates addObject:removeStr];
-//        } else {
+        if (self.secondDates && self.secondDates.count == 0) {
+            [self.secondDates addObject:removeStr];
+        } else {
+            
             [self.secondDates insertObject:removeStr atIndex:toIndexPath.item];
-//        }
+        }
+
         [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
-    } else {
+    } else if (indexPath.section == 1){
         NSIndexPath *toIndexPath = [NSIndexPath indexPathForRow:[collectionView numberOfItemsInSection:0] inSection:0];
         NSString *removeStr = self.secondDates[indexPath.item];
         [self.secondDates removeObjectAtIndex:indexPath.item];
-//        if (self.firstDates && self.firstDates.count == 0) {
-//            [self.firstDates addObject:removeStr];
-//        } else {
+        if (self.firstDates && self.firstDates.count == 0) {
+            [self.firstDates addObject:removeStr];
+        } else {
             [self.firstDates insertObject:removeStr atIndex:toIndexPath.item];
-//        }
+        }
+        [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
+    } else if (indexPath.section == 2) {
+        NSIndexPath *toIndexPath = [NSIndexPath indexPathForRow:[collectionView numberOfItemsInSection:0] inSection:0];
+        NSString *removeStr = self.thirdDates[indexPath.item];
+        [self.thirdDates removeObjectAtIndex:indexPath.item];
+        if (self.firstDates && self.firstDates.count == 0) {
+            [self.firstDates addObject:removeStr];
+        } else {
+            
+            [self.firstDates insertObject:removeStr atIndex:toIndexPath.item];
+        }
         [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
     }
 }

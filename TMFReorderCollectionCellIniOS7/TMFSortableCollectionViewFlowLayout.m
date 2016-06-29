@@ -5,7 +5,10 @@
 //  Created by MrChens on 16/6/23.
 //  Copyright © 2016年 TMFuny. All rights reserved.
 //
+//https://realm.io/cn/news/gwendolyn-weston-ios-background-networking/
+//http://mobilev5.github.io/2016/03/13/meeting-common-urldownloader/
 //https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS/CreatingCustomLayouts/CreatingCustomLayouts.html#//apple_ref/doc/uid/TP40012334-CH5-SW6
+//http://stackoverflow.com/questions/12611292/uicollectionview-assertion-failure
 #import "TMFSortableCollectionViewFlowLayout.h"
 #import "TMFDateAttributes.h"
 #import <QuartzCore/QuartzCore.h>
@@ -262,25 +265,20 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
 //prepareForCollectionViewUpdates:
 //finalizeCollectionViewUpdates
 
-//- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
-//{
-//    UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
-//    
-//        attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
-//        attributes.alpha = 0.0f;
-//        return attributes;
-//}
-//
-//- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
-//{
-//    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
-//    
-//        attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
-//        attributes.alpha = 0.0f;
-//    
-//        return attributes;
-//
-//}
+- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+{
+    UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
+    
+    
+        return attributes;
+}
+
+- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
+{
+    UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
+
+        return attributes;
+}
 #pragma mark UIGestureRecognizerDelegate methods
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if ([self.panGestureRecognizer isEqual:gestureRecognizer]) {

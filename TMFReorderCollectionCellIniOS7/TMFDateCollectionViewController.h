@@ -11,4 +11,5 @@
 @interface TMFDateCollectionViewController : UICollectionViewController
 @property (nonatomic, strong, nullable) NSMutableArray *firstDates;
 @property (nonatomic, strong, nullable) NSMutableArray *secondDates;
+@property (nonatomic, strong, nullable) NSMutableArray *thirdDates;
 @end
