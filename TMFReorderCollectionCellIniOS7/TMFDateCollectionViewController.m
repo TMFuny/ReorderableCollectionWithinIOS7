@@ -70,7 +70,7 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
     } else if (section == 1) {
         return self.secondDates.count;
     } else {
-        return self.thirdDates.count;
+        return 0;
     }
 }
 
@@ -186,8 +186,8 @@ static NSString * const headerReuseIndentifier = @"TMFHeaderReuseIdentifier";
                 
                 [self.thirdDates insertObject:removeStr atIndex:toIndexPath.item];
             }
-            
-            [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
+            [collectionView deleteItemsAtIndexPaths:@[indexPath]];
+//            [collectionView moveItemAtIndexPath:indexPath toIndexPath:toIndexPath];
             return;
         }
         

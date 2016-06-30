@@ -78,10 +78,12 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
 @property (nonnull, strong, nonatomic, readwrite) UILongPressGestureRecognizer *longPressGestureRecognizer;
 @property (nonnull, strong, nonatomic, readwrite) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nullable, strong, nonatomic) NSIndexPath *selectedItemIndexPath;
+@property (nullable, strong, nonatomic) NSMutableArray *deleteIndexPaths;
 @property (nullable, strong, nonatomic) UIView *currentView;
 @property (assign, nonatomic) CGPoint currentViewCenter;
 @property (assign, nonatomic) CGPoint panTranslationInCollectionView;
 @property (nullable, strong, nonatomic) CADisplayLink *displayLink;
+@property (nullable, strong, nonatomic) UIDynamicAnimator *dynamicAnimator;
 
 @property (weak, nonatomic, readonly) id<TMFSortableCollectionViewDataSource> dataSource;
 @property (weak, nonatomic, readonly) id<TMFSortableCollectionViewDelegateFlowLayout> delegate;
@@ -116,6 +118,7 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
 
 - (void)commonInit {
     [self configDefaults];
+    self.dynamicAnimator = [[UIDynamicAnimator alloc] initWithCollectionViewLayout:self];
     [self addObserver:self forKeyPath:kTMFCollectionViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
 }
 
@@ -265,6 +268,21 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
 //prepareForCollectionViewUpdates:
 //finalizeCollectionViewUpdates
 
+- (void)prepareForCollectionViewUpdates:(NSArray<UICollectionViewUpdateItem *> *)updateItems {
+    [super prepareForCollectionViewUpdates:updateItems];
+    self.deleteIndexPaths = [NSMutableArray array];
+    for (UICollectionViewUpdateItem *item in updateItems) {
+        if (item.updateAction == UICollectionUpdateActionDelete) {
+            [self.deleteIndexPaths addObject:item.indexPathBeforeUpdate];
+        }
+    }
+}
+
+- (void)finalizeCollectionViewUpdates {
+    [super finalizeCollectionViewUpdates];
+    self.deleteIndexPaths = nil;
+}
+
 - (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
 {
     UICollectionViewLayoutAttributes *attributes = [super initialLayoutAttributesForAppearingItemAtIndexPath:itemIndexPath];
@@ -276,7 +294,13 @@ static NSString * const kTMFCollectionViewKeyPath = @"collectionView";
 - (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath
 {
     UICollectionViewLayoutAttributes *attributes = [super finalLayoutAttributesForDisappearingItemAtIndexPath:itemIndexPath];
-
+    if ([self.deleteIndexPaths containsObject:itemIndexPath]) {
+        if (attributes) {
+            
+            attributes.center = self.collectionView.center;
+            attributes.transform3D = CATransform3DConcat(CATransform3DMakeRotation((2 * M_PI ), 0, 0, 1), CATransform3DMakeScale(0.1, 0.1, 1.0));
+        }
+    }
         return attributes;
 }
 #pragma mark UIGestureRecognizerDelegate methods

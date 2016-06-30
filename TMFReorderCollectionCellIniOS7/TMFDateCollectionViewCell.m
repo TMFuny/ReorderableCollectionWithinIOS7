@@ -36,10 +36,40 @@
     _dateLabel.textAlignment = NSTextAlignmentCenter;
     _dateLabel.backgroundColor = UIColorFromHex(0xeeeeee);
     _dateLabel.font = [UIFont systemFontOfSize:11];
+    [self addMotionCenterXEffect];
+//    [self addMotionShadowOffsetEffect];
+//    [self addGruopMotionEffect];
     [self addSubview:self.dateLabel];
     [self addConstraintToDateLabel];
 }
 #pragma mark - UIConfig
+- (void)addMotionCenterXEffect {
+    UIInterpolatingMotionEffect *horizontalMotionEffect = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x" type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    horizontalMotionEffect.minimumRelativeValue = @(-5);
+    horizontalMotionEffect.maximumRelativeValue = @(5);
+    [_dateLabel addMotionEffect:horizontalMotionEffect];
+}
+
+- (void)addMotionShadowOffsetEffect {
+    UIInterpolatingMotionEffect *shadowEffect = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"layer.shadowOffset" type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    shadowEffect.minimumRelativeValue = [NSValue valueWithCGSize:CGSizeMake(-10, 5)];
+    shadowEffect.maximumRelativeValue = [NSValue valueWithCGSize:CGSizeMake(10, 5)];
+    [_dateLabel addMotionEffect:shadowEffect];
+}
+
+- (void)addGruopMotionEffect {
+    UIInterpolatingMotionEffect *verticalMotionEffect = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.y" type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+    verticalMotionEffect.minimumRelativeValue = @(-5);
+    verticalMotionEffect.maximumRelativeValue = @(5);
+    
+    UIInterpolatingMotionEffect *horizontalMotionEffect = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x" type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    horizontalMotionEffect.minimumRelativeValue = @(-5);
+    horizontalMotionEffect.maximumRelativeValue = @(5);
+    
+    UIMotionEffectGroup *group = [UIMotionEffectGroup new];
+    group.motionEffects = @[horizontalMotionEffect, verticalMotionEffect];
+    [_dateLabel addMotionEffect:group];
+}
 #pragma mark - UIUpdate
 
 #pragma mark - AppleDataSource and Delegate
@@ -56,7 +86,7 @@
                                                                             toItem:self
                                                                          attribute:NSLayoutAttributeLeading
                                                                         multiplier:1
-                                                                          constant:0];
+                                                                          constant:5];
     
     NSLayoutConstraint *trailingConstraint = [NSLayoutConstraint constraintWithItem:self.dateLabel
                                                                   attribute:NSLayoutAttributeTrailing
@@ -64,7 +94,7 @@
                                                                              toItem:self
                                                                           attribute:NSLayoutAttributeTrailing
                                                                          multiplier:1
-                                                                           constant:0];
+                                                                           constant:-5];
     
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.dateLabel
                                                                      attribute:NSLayoutAttributeTop
@@ -72,7 +102,7 @@
                                                                         toItem:self
                                                                      attribute:NSLayoutAttributeTop
                                                                     multiplier:1
-                                                                      constant:0];
+                                                                      constant:5];
     
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.dateLabel
                                                                         attribute:NSLayoutAttributeBottom
@@ -80,7 +110,7 @@
                                                                            toItem:self
                                                                         attribute:NSLayoutAttributeBottom
                                                                        multiplier:1
-                                                                         constant:0];
+                                                                         constant:-5];
     
     [self addConstraints:@[leadingConstraint, trailingConstraint, topConstraint, bottomConstraint]];
 }
